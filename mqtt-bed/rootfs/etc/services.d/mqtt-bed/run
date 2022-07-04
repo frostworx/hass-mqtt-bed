@@ -1,0 +1,36 @@
+#!/usr/bin/with-contenv bashio
+# ==============================================================================
+# Start the example service
+# s6-overlay docs: https://github.com/just-containers/s6-overlay
+# ==============================================================================
+
+# Add your code here
+
+# Declare variables
+declare bed_address
+declare mqtt_user
+declare mqtt_pass
+declare mqtt_server
+declare mqtt_port
+declare mqtt_topic
+declare bed_type
+
+## Get the key from the user config options.
+bed_type=$(bashio::config 'bed_type')
+bed_address=$(bashio::config 'bed_address')
+mqtt_user=$(bashio::config 'mqtt_user')
+mqtt_pass=$(bashio::config 'mqtt_pass')
+mqtt_server=$(bashio::config 'mqtt_server')
+mqtt_port=$(bashio::config 'mqtt_port')
+mqtt_topic=$(bashio::config 'mqtt_topic')
+
+
+## Run your program
+sed -i "s/BED_TYPE =.*/BED_TYPE = \"${bed_type}\"/" /app/config.py
+sed -i "s/BED_ADDRESS =.*/BED_ADDRESS = \"${bed_address}\"/" /app/config.py
+sed -i "s/MQTT_USERNAME =.*/MQTT_USERNAME = \"${mqtt_user}\"/" /app/config.py
+sed -i "s/MQTT_PASSWORD =.*/MQTT_PASSWORD = \"${mqtt_pass}\"/" /app/config.py
+sed -i "s/MQTT_SERVER =.*/MQTT_SERVER = \"${mqtt_server}\"/" /app/config.py
+sed -i "s/MQTT_SERVER_PORT =.*/MQTT_SERVER_PORT = ${mqtt_port}/" /app/config.py
+sed -i "s/MQTT_TOPIC =.*/MQTT_TOPIC = \"${mqtt_topic}\"/" /app/config.py
+exec python3 /app/mqtt-bed.py
