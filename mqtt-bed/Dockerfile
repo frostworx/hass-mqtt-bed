@@ -18,7 +18,8 @@ WORKDIR /app
 
 RUN pip3 install -r requirements.txt
 USER root
-RUN setcap cap_net_admin,cap_net_raw+eip $(eval readlink -f $(which python3))
 RUN apk add --no-cache bluez-deprecated \
-    && setcap cap_net_admin,cap_net_raw+eip $(eval readlink -f $(which hcitool)) \
-    && setcap cap_net_admin,cap_net_raw+eip $(eval readlink -f $(which hciconfig))
+    && setcap cap_net_admin,cap_net_raw=+eip $(eval readlink -f $(which python3)) \
+    && setcap cap_net_admin,cap_net_raw=+eip $(eval readlink -f $(which hcitool)) \
+    && setcap cap_net_admin,cap_net_raw=+eip $(eval readlink -f $(which hciconfig)) \
+    && setcap cap_net_admin,cap_net_raw=+eip /usr/lib/python3.9/site-packages/bluepy/bluepy-helper
