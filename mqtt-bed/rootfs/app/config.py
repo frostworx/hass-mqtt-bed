@@ -1,10 +1,10 @@
 # mqtt-bed config
 
-BED_ADDRESS = "7C:EC:79:FF:6D:02"
+BED_ADDRESS = "DC:BB:48:42:D9:3E"
 
 MQTT_USERNAME = "mqttbed"
 MQTT_PASSWORD = "mqtt-bed"
-MQTT_SERVER = "homeassistant.local"
+MQTT_SERVER = "10.0.0.3"
 MQTT_SERVER_PORT = 1883
 MQTT_TOPIC = "bed"
 
