@@ -8,8 +8,8 @@ MQTT_SERVER = "10.0.0.3"
 MQTT_SERVER_PORT = 1883
 MQTT_TOPIC = "bed"
 
-# Bed controller type, supported values are "serta", "jiecang" and "dewertokin"
-BED_TYPE = "dewertokin"
+# Bed controller type, supported values are "serta", "jiecang", "lucid", and "dewertokin"
+BED_TYPE = "lucid"
 
 # Don't worry about these unless you want to
 MQTT_CHECKIN_TOPIC = "checkIn/bed"

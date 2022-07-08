@@ -8,6 +8,7 @@ from asyncio_mqtt import Client, MqttError
 from controllers.dewertokin import dewertokinBLEController
 from controllers.jiecang import jiecangBLEController
 from controllers.serta import sertaBLEController
+from controllers.lucid import lucidBLEController
 
 # mqtt-bed default config values. Set these in config.py yourself.
 MQTT_USERNAME = "mqttbed"
@@ -20,7 +21,7 @@ MQTT_CHECKIN_PAYLOAD = "OK"
 MQTT_ONLINE_PAYLOAD = "online"
 MQTT_QOS = 0
 DEBUG = 0
-BED_TYPE = "serta"
+BED_TYPE = "lucid"
 
 from config import *
 
@@ -99,11 +100,13 @@ async def main():
 
     if ble_address is None:
         raise Exception("BLE_ADDRESS env not set")
-    
+
     if BED_TYPE == "serta":
         ble = sertaBLEController(ble_address)
     elif BED_TYPE == "jiecang":
         ble = jiecangBLEController(ble_address)
+    elif BED_TYPE == "lucid":
+        ble = lucidBLEController(ble_address)
     elif BED_TYPE == "dewertokin":
         ble = dewertokinBLEController(ble_address)
     else:
