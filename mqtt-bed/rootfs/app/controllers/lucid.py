@@ -71,8 +71,8 @@ class lucidBLEController:
                 print("Attempting to connect to bed.")
                 self.device = ble.Peripheral(deviceAddr=self.addr, addrType='random')
                 print("Connected to bed.")
-                self.characteristics = self.device.getCharacteristics(uuid='0000ffe9-0000-1000-8000-00805f9b34fb')
-                print("characteristics: " + self.characteristics)
+                self.characteristic = self.device.getServiceByUUID(0xffe5).getCharacteristics(0xffe9)[0]
+                print("Set up the control characteristic: " + self.characteristic)
                 return
             except:
                 pass
@@ -106,7 +106,7 @@ class lucidBLEController:
     # Separate charWrite function.
     def charWrite(self, cmd):
         print("Attempting to transmit command.")
-        self.characteristics.write(bytes.fromhex(cmd), withResponse=False)
+        self.characteristic.write(bytes.fromhex(cmd), withResponse=False)
         #self.device.writeCharacteristic(0x001a, bytes.fromhex(cmd), withResponse=True)
         print("Command sent successfully.")
         return
