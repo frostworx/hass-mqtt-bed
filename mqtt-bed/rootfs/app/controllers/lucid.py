@@ -3,66 +3,67 @@
 # ---------------------------------------------------------------------------
 import bluepy.btle as ble
 import time
-# import threading
+import threading
 
 class lucidBLEController:
     def __init__(self, addr):
         self.charWriteInProgress = False
         self.addr = addr
         self.commands = {
-            #"Flat Preset": "040210000000",
-            #"ZeroG Preset": "040200004000",
-            #"TV Position": "040200003000",
-            #"Quiet Sleep": "040200008000",
+            "Flat Preset":   "e6fe160000000800fd",
+            "ZeroG Preset":  "e6fe160010000000f5",
+            "TV Preset":     "e6fe160040000000c5",
+            "Lounge Preset": "e6fe160020000000e5",
+            "Quiet Sleep":   "e6fe16008000000085",
             #"Memory 1": "040200001000",
             #"Memory 2": "040200002000",
             #"Underlight": "040200020000",
-            "Lift Head": "e6fe16040000000001",
+            "Lift Head":      "e6fe16010000000004",
+            "Lower Head":     "e6fe16020000000003",
+            "Lift Foot":      "e6fe16040000000001",
+            "Lower Foot":     "e6fe160800000000fd",
             "Massage Toggle": "e6fe16000100000004",
-            #"Lower Head": "040200000002",
-            #"Lift Foot": "040200000004",
-            #"Lower Foot": "040200000008",
             # Note: Wave cycles "On High", "On Medium", "On Low", "Off"
             #"Wave Massage Cycle": "040280000000",
             # Note: Head and Foot cycles "On Low, "On Medium", "On High", "Off"
             #"Head Massage Cycle": "040200000800",
             #"Foot Massage Cycle": "040200400000",
             #"Massage Off": "040202000000",
-            #"Keepalive NOOP": "040200000000",
+            "Keepalive NOOP": "e6fe16000000000005",
         }
         # Initialise the adapter and connect to the bed before we start waiting for messages.
         self.connectBed(ble)
         # Start the background polling/keepalive/heartbeat function.
-        #thread = threading.Thread(target=self.bluetoothPoller, args=())
-        #thread.daemon = True
-        #thread.start()
+        thread = threading.Thread(target=self.bluetoothPoller, args=())
+        thread.daemon = True
+        thread.start()
 
     # There seem to be a lot of conditions that cause the bed to disconnect Bluetooth.
     # Here we use the value of 040200000000, which seems to be a noop.
     # This lets us poll the bed, detect a disconnection and reconnect before the user notices.
-    #def bluetoothPoller(self):
-    #    while True:
-    #        if self.charWriteInProgress is False:
-    #            try:
-    #                cmd = self.commands.get("Keepalive NOOP", None)
-    #                self.device.writeCharacteristic(0x0013, bytes.fromhex(cmd), withResponse=True)
-    #                print("Keepalive success!")
-    #            except:
-    #                print("Keepalive failed! (1/2)")
-    #                try:
-    #                    # We perform a second keepalive check 0.5 seconds later before reconnecting.
-    #                    time.sleep(0.5)
-    #                    cmd = self.commands.get("Keepalive NOOP", None)
-    #                    self.device.writeCharacteristic(0x0013, bytes.fromhex(cmd), withResponse=True)
-    #                    print("Keepalive success!")
-    #                except:
-    #                    # If both keepalives failed, we reconnect.
-    #                    print("Keepalive failed! (2/2)")
-    #                    self.connectBed(ble)
-    #        else:
-    #            # To minimise any chance of contention, we don't heartbeat if a charWrite is in progress.
-    #            print("charWrite in progress, heartbeat skipped.")
-    #        time.sleep(10)
+    def bluetoothPoller(self):
+       while True:
+           if self.charWriteInProgress is False:
+               try:
+                   cmd = self.commands.get("Keepalive NOOP", None)
+                   self.device.getServiceByUUID(0xffe5).getCharacteristics(0xffe9)[0].write(bytes.fromhex(cmd), withResponse=True)
+                   print("Keepalive success!")
+               except:
+                   print("Keepalive failed! (1/2)")
+                   try:
+                       # We perform a second keepalive check 0.5 seconds later before reconnecting.
+                       time.sleep(0.5)
+                       cmd = self.commands.get("Keepalive NOOP", None)
+                       self.device.getServiceByUUID(0xffe5).getCharacteristics(0xffe9)[0].write(bytes.fromhex(cmd), withResponse=True)
+                       print("Keepalive success!")
+                   except:
+                       # If both keepalives failed, we reconnect.
+                       print("Keepalive failed! (2/2)")
+                       self.connectBed(ble)
+           else:
+               # To minimise any chance of contention, we don't heartbeat if a charWrite is in progress.
+               print("charWrite in progress, heartbeat skipped.")
+           time.sleep(10)
 
     # Separate out the bed connection to an infinite loop that can be called on init (or a communications failure).
     def connectBed(self, ble):
@@ -71,8 +72,6 @@ class lucidBLEController:
                 print("Attempting to connect to bed.")
                 self.device = ble.Peripheral(deviceAddr=self.addr, addrType='random')
                 print("Connected to bed.")
-                self.characteristic = self.device.getServiceByUUID(0xffe5).getCharacteristics(0xffe9)[0]
-                print("Set up the control characteristic: " + self.characteristic)
                 return
             except:
                 pass
@@ -84,8 +83,9 @@ class lucidBLEController:
         cmd = self.commands.get(name, None)
         if cmd is None:
             # print, but otherwise ignore Unknown Commands.
-            print("Unknown Command, ignoring.")
-            return
+            # print("Unknown Command, ignoring.")
+            # return
+            cmd = name
         self.charWriteInProgress = True
         try:
             self.charWrite(cmd)
@@ -106,7 +106,6 @@ class lucidBLEController:
     # Separate charWrite function.
     def charWrite(self, cmd):
         print("Attempting to transmit command.")
-        self.characteristic.write(bytes.fromhex(cmd), withResponse=False)
-        #self.device.writeCharacteristic(0x001a, bytes.fromhex(cmd), withResponse=True)
+        self.device.getServiceByUUID(0xffe5).getCharacteristics(0xffe9)[0].write(bytes.fromhex(cmd), withResponse=False)
         print("Command sent successfully.")
         return

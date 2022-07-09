@@ -33,4 +33,4 @@ sed -i "s/MQTT_PASSWORD =.*/MQTT_PASSWORD = \"${mqtt_pass}\"/" /app/config.py
 sed -i "s/MQTT_SERVER =.*/MQTT_SERVER = \"${mqtt_server}\"/" /app/config.py
 sed -i "s/MQTT_SERVER_PORT =.*/MQTT_SERVER_PORT = ${mqtt_port}/" /app/config.py
 sed -i "s/MQTT_TOPIC =.*/MQTT_TOPIC = \"${mqtt_topic}\"/" /app/config.py
-exec python3 /app/mqtt-bed.py
+exec python3 -u /app/mqtt-bed.py
