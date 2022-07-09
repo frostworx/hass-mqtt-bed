@@ -10,26 +10,26 @@ class lucidBLEController:
         self.charWriteInProgress = False
         self.addr = addr
         self.commands = {
-            "Flat Preset":   "e6fe160000000800fd",
-            "ZeroG Preset":  "e6fe160010000000f5",
-            "TV Preset":     "e6fe160040000000c5",
-            "Lounge Preset": "e6fe160020000000e5",
-            "Quiet Sleep":   "e6fe16008000000085",
-            #"Memory 1": "040200001000",
-            #"Memory 2": "040200002000",
-            #"Underlight": "040200020000",
-            "Lift Head":      "e6fe16010000000004",
-            "Lower Head":     "e6fe16020000000003",
-            "Lift Foot":      "e6fe16040000000001",
-            "Lower Foot":     "e6fe160800000000fd",
-            "Massage Toggle": "e6fe16000100000004",
+            "Flat Preset":        "e6fe160000000800fd",
+            "ZeroG Preset":       "e6fe160010000000f5",
+            "TV Preset":          "e6fe160040000000c5",
+            "Lounge Preset":      "e6fe160020000000e5",
+            "Quiet Sleep":        "e6fe16008000000085",
+            "Memory 1":           "e6fe16000001000004",
+            "Memory 2":           "e6fe16000004000001",
+            "Underlight":         "e6fe16000002000003",
+            "Lift Head":          "e6fe16010000000004",
+            "Lower Head":         "e6fe16020000000003",
+            "Lift Foot":          "e6fe16040000000001",
+            "Lower Foot":         "e6fe160800000000fd",
+            "Massage Toggle":     "e6fe16000100000004",
             # Note: Wave cycles "On High", "On Medium", "On Low", "Off"
-            #"Wave Massage Cycle": "040280000000",
+            "Wave Massage Cycle": "e6fe160000001000f5",
             # Note: Head and Foot cycles "On Low, "On Medium", "On High", "Off"
-            #"Head Massage Cycle": "040200000800",
-            #"Foot Massage Cycle": "040200400000",
-            #"Massage Off": "040202000000",
-            "Keepalive NOOP": "e6fe16000000000005",
+            "Head Massage Cycle": "e6fe160008000000fd",
+            "Foot Massage Cycle": "e6fe16000400000001",
+            "Massage Timer":      "e6fe16000200000003",
+            "Keepalive NOOP":     "e6fe16000000000005",
         }
         # Initialise the adapter and connect to the bed before we start waiting for messages.
         self.connectBed(ble)
