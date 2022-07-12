@@ -63,6 +63,10 @@ class lucidBLEController:
            else:
                # To minimise any chance of contention, we don't heartbeat if a charWrite is in progress.
                print("charWrite in progress, heartbeat skipped.")
+               if time.time() - self.charWriteStart > 30:
+                 print("charWrite in progress for 30 seconds, exiting now")
+                 sys.exit()
+
            time.sleep(10)
 
     # Separate out the bed connection to an infinite loop that can be called on init (or a communications failure).
@@ -87,6 +91,7 @@ class lucidBLEController:
             # return
             cmd = name
         self.charWriteInProgress = True
+        self.charWriteStart = time.time()
         try:
             self.charWrite(cmd)
         except:
@@ -106,6 +111,6 @@ class lucidBLEController:
     # Separate charWrite function.
     def charWrite(self, cmd):
         print("Attempting to transmit command.")
-        self.device.getServiceByUUID(0xffe5).getCharacteristics(0xffe9)[0].write(bytes.fromhex(cmd), withResponse=False)
+        self.device.getServiceByUUID(0xffe5).getCharacteristics(0xffe9)[0].write(bytes.fromhex(cmd), withResponse=True)
         print("Command sent successfully.")
         return
