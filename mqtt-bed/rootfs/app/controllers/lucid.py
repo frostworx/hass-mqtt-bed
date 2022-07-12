@@ -8,6 +8,7 @@ import threading
 class lucidBLEController:
     def __init__(self, addr):
         self.charWriteInProgress = False
+        self.charWriteStart = None
         self.addr = addr
         self.commands = {
             "Flat Preset":        "e6fe160000000800fd",
@@ -42,6 +43,7 @@ class lucidBLEController:
     # Here we use the value of 040200000000, which seems to be a noop.
     # This lets us poll the bed, detect a disconnection and reconnect before the user notices.
     def bluetoothPoller(self):
+       print("Starting keep-alive thread")
        while True:
            if self.charWriteInProgress is False:
                try:
@@ -63,7 +65,7 @@ class lucidBLEController:
            else:
                # To minimise any chance of contention, we don't heartbeat if a charWrite is in progress.
                print("charWrite in progress, heartbeat skipped.")
-               if time.time() - self.charWriteStart > 30:
+               if self.charWriteStart is not None and time.time() - self.charWriteStart > 30:
                  print("charWrite in progress for 30 seconds, exiting now")
                  sys.exit()
 
